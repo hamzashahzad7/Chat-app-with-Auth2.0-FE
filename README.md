@@ -1,113 +1,55 @@
-# 🧠 Support Chat App — Frontend
+# 🧩 Chat App Frontend (Next.js + Tailwind + Socket.IO)
 
-This is the **frontend** for a real-time support chat application built with **Next.js**, **Socket.IO**, **NextAuth.js**, and **Tailwind CSS**. Users can authenticate via **Google OAuth** and chat in real-time using a secure, persistent connection.
+This is the frontend of a real-time chat application built with **Next.js**, **NextAuth (Google OAuth)**, and **Socket.IO**.
 
----
+## 🔧 Tech Stack
+- ✅ Next.js (App Router)
+- 🎨 TailwindCSS
+- ⚡ Socket.IO Client
+- 🔐 NextAuth.js (Google OAuth)
+- 🔊 Toast notifications
+- 💬 Sentiment badges (positive/negative/neutral)
 
-## 🚀 Features
+## ✅ Features
+- Google Sign-In via NextAuth
+- Realtime chat using Socket.IO
+- Session-based routing via `middleware.ts`
+- Sentiment analysis tags per message
+- Notification when new users join
+- Audio feedback on send
 
-- 🔐 **Google OAuth Login** using NextAuth.js
-- 💬 **Real-time messaging** via Socket.IO
-- 📡 Join chat rooms based on authenticated user
-- 🧠 Session management with `useSession()`
-- 🎨 Responsive and modern UI built with Tailwind CSS
-- 🔔 System notifications for new users joining
-
----
-
-## 🛠 Tech Stack
-
-- **Next.js (App Router)**
-- **TypeScript**
-- **Tailwind CSS**
-- **Socket.IO (client)**
-- **NextAuth.js** (Google OAuth)
-- **React Hooks** (`useSession`, `useEffect`, `useRef`)
-
----
-
-## 📦 Installation
-
-1. **Clone the repository**
+## 🛠 How to Run
 
 ```bash
-git clone https://github.com/your-username/support-chat-frontend.git
-cd support-chat-frontend
-```
-
-2. **Install dependencies**
-
-```bash
+cd frontend
 npm install
 ```
 
-3. **Setup environment variables**
-
-Create a `.env.local` file in the root and add:
-
+### 🔑 Setup `.env.local`
 ```env
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
 NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_generated_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
-4. **Start the development server**
-
+### 🧪 Dev Server
 ```bash
 npm run dev
 ```
 
-> The app runs at `http://localhost:3000`
+## 📂 Routes
+- `/` – Landing page
+- `/chat` – Protected chat interface
+
+## 🔐 Middleware
+`middleware.ts` handles redirection:
+- Redirects logged-in users from `/` to `/chat`
+- Redirects guests from `/chat` to `/`
 
 ---
 
-## 🧠 Folder Structure
-
-```
-/app
-  /chat            # Chat room UI
-  /api/auth        # NextAuth handler
-  page.tsx         # Landing page
-/layout.tsx        # Root layout
-/globals.css       # Tailwind styles
-```
-
----
-
-## 🔗 Backend Integration
-
-Ensure your **backend (Node.js + Express + Socket.IO)** is running at:
-
-```
-http://localhost:8000
-```
-
-The frontend connects to this for real-time communication and message history via REST.
-
----
-
-## 📸 Screenshots
-
-Coming soon...
-
----
-
-## ✅ TODO / Future Features
-
-- [ ] Admin/Support Dashboard
-- [ ] Typing indicators
-- [ ] User avatars from Google
-- [ ] Role-based permissions (agent vs. client)
-- [ ] Push notifications
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License. Feel free to fork, contribute, or build on top of it.
-
----
-
-## 🙋‍♂️ Contact
-
-Have questions or suggestions? Open an issue or reach out at [hamza_mughal07@outlook.com](mailto:hamza_mughal07@outlook.com).
+### 🚀 Future Ideas
+- Typing indicators
+- Emoji support
+- Message search/filter

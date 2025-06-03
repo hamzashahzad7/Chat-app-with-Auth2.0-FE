@@ -7,52 +7,55 @@ import toast from "react-hot-toast";
 import { io, Socket } from "socket.io-client";
 
 export interface Message {
-    id: number;
+    id: number | string;
     content: string;
     sender: string;
+    sentiment?: 'positive' | 'negative' | 'neutral' | 'unknown';
     room: string;
     createdAt: string;
 }
 
 export default function Chat() {
+    // ✅ States
     const { push } = useRouter();
-    const { data: session, status} = useSession();
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const { data: session } = useSession();
     const [messages, setMessages] = useState<Message[]>([]);
     const [text, setText] = useState('');
-    const room: string = 'support-room';
-    const username = session ? session?.user.name : 'User' + Math.floor(Math.random() * 1000);
+    const [username, setUsername] = useState<string>('');
+    const audioRef = useRef<HTMLAudioElement | null>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
     const socketRef = useRef<Socket | null>(null);
+    const room = 'support-room';
 
+    // ✅ Fetch initial messages
     const loadMessages = async () => {
         const response = await fetch(`http://localhost:8000/messages/${room}`);
         const data = await response.json();
         setMessages(data);
     };
 
+    // ✅ 1. Establish socket connection and event listeners (once)
     useEffect(() => {
         const socket = io('http://localhost:8000');
         socketRef.current = socket;
 
-        if (session) {
-            socket.emit('join', room)
-            socket.emit('userJoined', username); // 👈 Send username on connect
-        }
-
         socket.on('newMessage', (message: Message) => {
+            console.log('🟢 Received newMessage:', message);
             setMessages((prev) => [...prev, message]);
         });
 
         socket.on('userNotification', (msg: string) => {
-            setMessages((prev) => [...prev, {
-                id: Date.now(), // temporary ID
-                content: msg,
-                sender: 'System',
-                room: room,
-                createdAt: new Date().toISOString()
-            }]);
-            toast('New message: ' + msg);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: `system-${Date.now()}`,
+                    content: msg,
+                    sender: 'System',
+                    room,
+                    createdAt: new Date().toISOString(),
+                }
+            ]);
+            toast('🔔 ' + msg);
         });
 
         loadMessages();
@@ -62,11 +65,22 @@ export default function Chat() {
         };
     }, []);
 
+    // ✅ 2. After session is ready, join room and announce
+    useEffect(() => {
+        if (session && socketRef.current) {
+            const name = session.user.name;
+            setUsername(name);
+            socketRef.current.emit('join', room);
+            socketRef.current.emit('userJoined', name);
+        }
+    }, [session]);
 
+    // ✅ 3. Auto-scroll to bottom
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // ✅ Message send handler
     const handleSend = (e: React.FormEvent) => {
         e.preventDefault();
         if (!text.trim() || !socketRef.current) return;
@@ -76,11 +90,11 @@ export default function Chat() {
             content: text,
             sender: username,
         });
+
         audioRef.current?.play();
         setText('');
     };
 
-    if (status === 'loading') return <p className="text-white p-4">Loading...</p>;
     if (!session) return (
         <div className="text-white p-4">
             <p>You must be logged in.</p>
@@ -116,9 +130,23 @@ export default function Chat() {
             </div>
             <div className="h-4/5 overflow-y-auto bg-gray-800 rounded-lg p-4">
                 {messages.map((msg) => (
-                    <div key={msg.id} className="mb-2">
-                        <span className="font-semibold">{msg.sender}: </span>
-                        <span>{msg.content}</span>
+                    <div key={msg.id} className="mb-2 flex items-start justify-between">
+                        <div>
+                            <span className="font-semibold">{msg.sender}: </span>
+                            <span>{msg.content}</span>
+                        </div>
+                        {msg.sentiment && (
+                            <span
+                                className={`text-xs ml-2 rounded-full px-2 py-1 ${msg.sentiment === 'positive'
+                                    ? 'bg-green-600 text-white'
+                                    : msg.sentiment === 'negative'
+                                        ? 'bg-red-600 text-white'
+                                        : 'bg-gray-600 text-white'
+                                    }`}
+                            >
+                                {msg.sentiment}
+                            </span>
+                        )}
                     </div>
                 ))}
                 <div ref={bottomRef}></div>
