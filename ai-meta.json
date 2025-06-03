@@ -1,0 +1,26 @@
+{
+    "title": "Realtime Chat App with AI Sentiment Frontend Repo",
+    "description": "A full-stack real-time chat application using Next.js, Socket.IO, Prisma, and Hugging Face sentiment analysis API.",
+    "technologies": [
+        "Next.js",
+        "Socket.IO",
+        "TailwindCSS",
+        "Prisma",
+        "PostgreSQL",
+        "NextAuth.js",
+        "Hugging Face",
+        "OpenAI"
+    ],
+    "features": [
+        "Realtime messaging",
+        "AI-powered sentiment detection",
+        "Google OAuth authentication",
+        "System notifications for user join",
+        "Audio feedback on message send",
+        "Protected routes via middleware"
+    ],
+    "author": "Hamza Mughal",
+    "github": "https://github.com/hamzashahzad7",
+    "linkedin": "https://www.linkedin.com/in/hamza-mughal372/",
+    "Backend Repo":"https://github.com/hamzashahzad7/Chat-app-with-Auth2.0-BE"
+}
